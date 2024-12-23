@@ -1,0 +1,17 @@
+spring:
+ application:
+  name: infosysdemo
+ datasource:
+  url: jdbc:mysql://localhost:3306/EmployeeDetails?useSSL=false
+  username: root
+  password: W7301@jqir#
+ jpa:
+  show-sql: true
+  hibernate:
+   ddl-auto: update
+  properties:
+   hibernate:
+    dialect: org.hibernate.dialect.MySQL8Dialect
+    format_sql: true
+server:
+ port:  8795
