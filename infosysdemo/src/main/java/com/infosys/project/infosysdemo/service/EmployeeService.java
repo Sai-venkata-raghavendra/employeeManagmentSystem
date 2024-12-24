@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.infosys.project.infosysdemo.dao.EmployeeEntity;
+import com.infosys.project.infosysdemo.exception.EmployeeNotFoundException;
 import com.infosys.project.infosysdemo.repository.EmployeeRepository;
 import com.infosys.project.infosysdemo.vo.EmployeeInputVO;
 import com.infosys.project.infosysdemo.vo.EmployeeOutputVO;
@@ -27,36 +28,57 @@ public class EmployeeService {
 		employeeEntity.setSalary(employeeInputVO.getSalary());
 		EmployeeEntity eoutEntity = employeeRepository.save(employeeEntity);
 		UUID uuid = UUID.randomUUID();
-		employeeOutputVO.setTransactionId(uuid.toString());
-		employeeOutputVO.setId(eoutEntity.getId());
-		employeeOutputVO.setName(eoutEntity.getName());
-		employeeOutputVO.setDepartment(eoutEntity.getDepartment());
-		employeeOutputVO.setEmail(eoutEntity.getEmail());
-		employeeOutputVO.setSalary(eoutEntity.getSalary());
+		if (eoutEntity != null) {
+			if (eoutEntity.getId() != null) {
+				employeeOutputVO.setId(eoutEntity.getId());
+			}
+			if (uuid != null) {
+				employeeOutputVO.setTransactionId(uuid.toString());
+			}
+			if (eoutEntity.getName() != null) {
+				employeeOutputVO.setName(eoutEntity.getName());
+			}
+			if (eoutEntity.getDepartment() != null) {
+				employeeOutputVO.setDepartment(eoutEntity.getDepartment());
+			}
+			if (eoutEntity.getEmail() != null) {
+				employeeOutputVO.setEmail(eoutEntity.getEmail());
+			}
+			employeeOutputVO.setSalary(eoutEntity.getSalary());
+		}
 		return employeeOutputVO;
 	}
 
-	public List<EmployeeEntity> getAllDetails() {
+	public List<EmployeeEntity> getAllDetails() throws EmployeeNotFoundException {
 		List<EmployeeEntity> empEntity = employeeRepository.findAll();
-		try {
-			return empEntity;
-		} catch (Exception e) {
-			throw new NullPointerException("As employee data base id empty" + e.getMessage());
-		}
-
+		return empEntity;
 	}
 
-	public EmployeeOutputVO getDetailsById(Long id) {
+	public EmployeeOutputVO getDetailsById(Long id) throws EmployeeNotFoundException {
 
 		UUID uuid = UUID.randomUUID();
 		EmployeeEntity eoutEntity = employeeRepository.findById(id).get();
-		employeeOutputVO.setId(eoutEntity.getId());
-		employeeOutputVO.setTransactionId(uuid.toString());
-		employeeOutputVO.setName(eoutEntity.getName());
-		employeeOutputVO.setDepartment(eoutEntity.getDepartment());
-		employeeOutputVO.setEmail(eoutEntity.getEmail());
-		employeeOutputVO.setSalary(eoutEntity.getSalary());
-		return employeeOutputVO;
+		if (eoutEntity != null) {
+			if (eoutEntity.getId() != null) {
+				employeeOutputVO.setId(eoutEntity.getId());
+			}
+			if (uuid != null) {
+				employeeOutputVO.setTransactionId(uuid.toString());
+			}
+			if (eoutEntity.getName() != null) {
+				employeeOutputVO.setName(eoutEntity.getName());
+			}
+			if (eoutEntity.getDepartment() != null) {
+				employeeOutputVO.setDepartment(eoutEntity.getDepartment());
+			}
+			if (eoutEntity.getEmail() != null) {
+				employeeOutputVO.setEmail(eoutEntity.getEmail());
+			}
+			employeeOutputVO.setSalary(eoutEntity.getSalary());
+			return employeeOutputVO;
+		} else {
+			throw new EmployeeNotFoundException("Employee Id is not present in Database");
+		}
 	}
 
 }

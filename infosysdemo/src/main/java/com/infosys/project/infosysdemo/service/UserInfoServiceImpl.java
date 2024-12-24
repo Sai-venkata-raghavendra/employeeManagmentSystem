@@ -24,25 +24,26 @@ public class UserInfoServiceImpl implements UserInfoService {
 
 	@Override
 	public String addUser(UserEntity userInfo) {
-		
+
 		List<UserEntity> userList = userRepository.findAll();
 		System.out.println(flag);
 		System.out.println(userList);
-		if(null != userList) {
-			for(UserEntity user : userList) {
-				if(user.getUserName().equals(userInfo.getUserName()))
+		if (null != userList) {
+			for (UserEntity user : userList) {
+				if (user.getUserName().equals(userInfo.getUserName())) {
 					flag = true;
-				else
+				} else {
 					flag = false;
+				}
 			}
 		}
 		System.out.println(flag);
-		if(flag) {
+		if (flag) {
 			return "User already exists";
 		} else {
 			System.out.println(userInfo);
 			System.out.println(userInfo.getUserName());
-			//System.out.println(userInfo.getPwd());
+			// System.out.println(userInfo.getPwd());
 			System.out.println("ADMIN");
 			System.out.println(userInfo.getId());
 			userInfo.setPassword(passwordEncoder.encode(userInfo.getPassword()));

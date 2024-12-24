@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.infosys.project.infosysdemo.dao.EmployeeEntity;
+import com.infosys.project.infosysdemo.exception.EmployeeNotFoundException;
 import com.infosys.project.infosysdemo.repository.EmployeeRepository;
 import com.infosys.project.infosysdemo.vo.EmployeeOutputVO;
 import com.infosys.project.infosysdemo.vo.UpdateEmployeeInputVO;
@@ -29,30 +30,35 @@ public class UpdateEmployeeService {
 			employeeEntity.setEmail(employeeInputVO.getEmail());
 			employeeEntity.setName(employeeInputVO.getName());
 			employeeEntity.setSalary(employeeInputVO.getSalary());
-
-			EmployeeEntity employeeEntit = employeeRepository.save(employeeEntity);
-
-			employeeOutputVO.setTransactionId(uuid.toString());
-			employeeOutputVO.setId(employeeEntit.getId());
-			employeeOutputVO.setName(employeeEntit.getName());
-			employeeOutputVO.setDepartment(employeeEntit.getDepartment());
-			employeeOutputVO.setEmail(employeeEntit.getEmail());
-			employeeOutputVO.setSalary(employeeEntit.getSalary());
-
+			EmployeeEntity eoutEntity = employeeRepository.save(employeeEntity);
+			if (eoutEntity != null) {
+				if (eoutEntity.getId() != null) {
+					employeeOutputVO.setId(eoutEntity.getId());
+				}
+				if (uuid != null) {
+					employeeOutputVO.setTransactionId(uuid.toString());
+				}
+				if (eoutEntity.getName() != null) {
+					employeeOutputVO.setName(eoutEntity.getName());
+				}
+				if (eoutEntity.getDepartment() != null) {
+					employeeOutputVO.setDepartment(eoutEntity.getDepartment());
+				}
+				if (eoutEntity.getEmail() != null) {
+					employeeOutputVO.setEmail(eoutEntity.getEmail());
+				}
+				employeeOutputVO.setSalary(eoutEntity.getSalary());
+			}
 			return employeeOutputVO;
 		} else {
-			throw new Exception();
+			throw new EmployeeNotFoundException("Employee Id is not Present in DataBase Please provide a valid Id");
 		}
 
 	}
 
-	public String deleteEmployeeByID(Long id) throws Exception {
-		try {
-			employeeRepository.deleteById(id);
-			return "Employee Deleted Succesfully";
-		} catch (Exception e) {
-			throw new Exception(e.getMessage());
-		}
+	public String deleteEmployeeByID(Long id) throws EmployeeNotFoundException {
+		employeeRepository.deleteById(id);
+		return "Employee Deleted Succesfully";
 	}
 
 }

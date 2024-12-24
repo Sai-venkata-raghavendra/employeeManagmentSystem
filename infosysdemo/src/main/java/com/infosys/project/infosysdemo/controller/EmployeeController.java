@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.infosys.project.infosysdemo.dao.EmployeeEntity;
+import com.infosys.project.infosysdemo.exception.EmployeeNotFoundException;
 import com.infosys.project.infosysdemo.service.EmployeeService;
 import com.infosys.project.infosysdemo.vo.EmployeeInputVO;
 import com.infosys.project.infosysdemo.vo.EmployeeOutputVO;
@@ -31,13 +32,13 @@ public class EmployeeController {
 	}
 
 	@RequestMapping(value = "/getAlldetails", method = RequestMethod.GET)
-	public ResponseEntity<List<EmployeeEntity>> getAllDetails() {
+	public ResponseEntity<List<EmployeeEntity>> getAllDetails() throws EmployeeNotFoundException {
 		List<EmployeeEntity> employeeEntity = employeeService.getAllDetails();
 		return new ResponseEntity<List<EmployeeEntity>>(employeeEntity, HttpStatus.ACCEPTED);
 	}
 
 	@RequestMapping(value = "/getDetailsById", method = RequestMethod.GET)
-	public ResponseEntity<EmployeeOutputVO> getDetailsById(@RequestParam(value = "id") Long id) {
+	public ResponseEntity<EmployeeOutputVO> getDetailsById(@RequestParam(value = "id") Long id) throws EmployeeNotFoundException {
 		EmployeeOutputVO employeeOutputVO = employeeService.getDetailsById(id);
 		return new ResponseEntity<EmployeeOutputVO>(employeeOutputVO, HttpStatus.ACCEPTED);
 	}
