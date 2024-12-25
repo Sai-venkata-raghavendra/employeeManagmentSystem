@@ -48,32 +48,30 @@ public class EmployeeController {
 		return new ResponseEntity<EmployeeOutputVO>(employeeOutputVO, HttpStatus.ACCEPTED);
 	}
 
-	/*
-	 * @RequestMapping(value = "/getDetailByAsc", method = RequestMethod.GET) public
-	 * ApiResponse<List<EmployeeEntity>> getAlldetails(@RequestParam(value =
-	 * "field") String field) { List<EmployeeEntity> noofEmp =
-	 * employeeService.getEmployeesBasedOnSorting(field); return new
-	 * ApiResponse<>(noofEmp.size(), noofEmp); }
-	 * 
-	 * @RequestMapping(value = "/getDetailByAsc", method = RequestMethod.GET) public
-	 * ApiResponse<Page<EmployeeEntity>> getAlldetailsByPage(@RequestParam(value =
-	 * "offset") int offset,
-	 * 
-	 * @RequestParam(value = "pageSize") int pageSize) { Page<EmployeeEntity>
-	 * noofEmpsPage = employeeService.findProductByPage(offset, pageSize); return
-	 * new ApiResponse<>(noofEmpsPage.getNumber(), noofEmpsPage); }
-	 * 
-	 * @RequestMapping(value = "/getDetailByAsc", method = RequestMethod.GET) public
-	 * Page<EmployeeEntity> getAlldetailsByPageAndSort(@RequestParam(value =
-	 * "offset") int offset,
-	 * 
-	 * @RequestParam(value = "pageSize") int pageSize, @RequestParam(value =
-	 * "field") String field,
-	 * 
-	 * @RequestParam(value = "ascordsc") boolean ascordsc) {
-	 * 
-	 * Sort sort = ascordsc ? Sort.by(field).ascending() :
-	 * Sort.by(field).descending(); Pageable noofEmpsPage = PageRequest.of(offset,
-	 * pageSize, sort); return employeeService.findAllPages(noofEmpsPage); }
-	 */
+	@RequestMapping(value = "/getDetailByAsc", method = RequestMethod.GET)
+	public ApiResponse<List<EmployeeEntity>> getAlldetails(@RequestParam(value = "field") String field) {
+		List<EmployeeEntity> noofEmp = employeeService.getEmployeesBasedOnSorting(field);
+		return new ApiResponse<>(noofEmp.size(), noofEmp);
+	}
+
+	@RequestMapping(value = "/getDetailByPage", method = RequestMethod.GET)
+	public ApiResponse<Page<EmployeeEntity>> getAlldetailsByPage(@RequestParam(value = "offset") int offset,
+
+			@RequestParam(value = "pageSize") int pageSize) {
+		Page<EmployeeEntity> noofEmpsPage = employeeService.findProductByPage(offset, pageSize);
+		return new ApiResponse<>(noofEmpsPage.getNumber(), noofEmpsPage);
+	}
+
+	@RequestMapping(value = "/getDetailByAscOrDsc", method = RequestMethod.GET)
+	public Page<EmployeeEntity> getAlldetailsByPageAndSort(@RequestParam(value = "offset") int offset,
+
+			@RequestParam(value = "pageSize") int pageSize, @RequestParam(value = "field") String field,
+
+			@RequestParam(value = "ascordsc") boolean ascordsc) {
+
+		Sort sort = ascordsc ? Sort.by(field).ascending() : Sort.by(field).descending();
+		Pageable noofEmpsPage = PageRequest.of(offset, pageSize, sort);
+		return employeeService.findAllPages(noofEmpsPage);
+	}
+
 }
