@@ -4,6 +4,10 @@ import java.util.List;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.infosys.project.infosysdemo.dao.EmployeeEntity;
@@ -52,6 +56,19 @@ public class EmployeeService {
 	public List<EmployeeEntity> getAllDetails() throws EmployeeNotFoundException {
 		List<EmployeeEntity> empEntity = employeeRepository.findAll();
 		return empEntity;
+	}
+
+	public Page<EmployeeEntity> findProductByPage(int offset, int pageSize) {
+		Page<EmployeeEntity> emps = employeeRepository.findAll(PageRequest.of(offset, pageSize));
+		return emps;
+	}
+
+	public Page<EmployeeEntity> findAllPages(Pageable pageable) {
+		return employeeRepository.findAll(pageable);
+	}
+
+	public List<EmployeeEntity> getEmployeesBasedOnSorting(String name) {
+		return employeeRepository.findAll(Sort.by(Sort.Direction.ASC, name));
 	}
 
 	public EmployeeOutputVO getDetailsById(Long id) throws EmployeeNotFoundException {

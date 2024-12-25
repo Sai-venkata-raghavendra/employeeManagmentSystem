@@ -5,13 +5,18 @@ spring:
   url: jdbc:mysql://localhost:3306/EmployeeDetails?useSSL=false
   username: root
   password: W7301@jqir#
+  testWhileIdle: true
+  validationQuery: SELECT 1
  jpa:
   show-sql: true
   hibernate:
    ddl-auto: update
-  properties:
+   naming-strategy: org.hibernate.cfg.ImprovedNamingStrategy
+ properties:
    hibernate:
     dialect: org.hibernate.dialect.MySQL8Dialect
     format_sql: true
+ main:
+   allow-circular-references: true
 server:
  port:  8795

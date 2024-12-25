@@ -18,56 +18,51 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import com.infosys.project.infosysdemo.filter.JwtFilter;
-import com.infosys.project.infosysdemo.service.UserInfoUserDetailsService;
-
+import com.infosys.project.infosysdemo.service.UserInfoService;
 
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
 public class SecurityConfig {
 
-	private static final String[] WHITE_LIST_URL = { "/user/new","/user/authenticate", "/api/v1/auth/**", "/v2/api-docs", "/v3/api-docs",
-			"/v3/api-docs/**", "/swagger-resources", "/swagger-resources/**", "/configuration/ui",
-			"/configuration/security", "/swagger-ui/**", "/webjars/**", "/swagger-ui.html", "/api/auth/**",
-			"/api/test/**" };
-	@Autowired
-	private JwtFilter authFilter;
-	
-	@Bean
-	public UserDetailsService userDetailsService() {
-        return new UserInfoUserDetailsService();
-    }
-	
-	@Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        return http.csrf().disable().cors().and()
-                .authorizeHttpRequests()
-                .requestMatchers(WHITE_LIST_URL).permitAll()
-                .and()
-                .authorizeHttpRequests().requestMatchers("/employees/**","/employees/**","/employeeUpdate/**")
-                .authenticated().and().sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                .and()
-                .authenticationProvider(authenticationProvider())
-                .addFilterBefore(authFilter, UsernamePasswordAuthenticationFilter.class)
-                .build();
-    }
-	
-	@Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
+    @Autowired
+    private JwtFilter jwtFilter;
+    @Bean
+    public UserDetailsService userDetailsService(){
+        return new UserInfoService();
     }
 
     @Bean
-    public AuthenticationProvider authenticationProvider(){
-        DaoAuthenticationProvider authenticationProvider=new DaoAuthenticationProvider();
+    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
+        return httpSecurity.csrf(csrf->csrf.disable())
+                .authorizeHttpRequests(auth->auth
+                        .requestMatchers("/auth/welcome","/auth/addUser","/auth/login","/api/v1/auth/**", "/v2/api-docs", "/v3/api-docs",
+                    			"/v3/api-docs/**", "/swagger-resources", "/swagger-resources/**", "/configuration/ui",
+                    			"/configuration/security", "/swagger-ui/**", "/webjars/**", "/swagger-ui.html", "/api/auth/**",
+                    			"/api/test/**")
+                        .permitAll()
+                        .anyRequest().authenticated())
+                .sessionManagement(session->session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authenticationProvider(authenticationProvider())
+                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
+                .build();
+    }
+
+    @Bean
+    public AuthenticationProvider authenticationProvider() {
+        DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
         authenticationProvider.setUserDetailsService(userDetailsService());
         authenticationProvider.setPasswordEncoder(passwordEncoder());
         return authenticationProvider;
     }
-    
+
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
-    	return configuration.getAuthenticationManager();
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
     }
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
+        return config.getAuthenticationManager();
+    }
+
 }
